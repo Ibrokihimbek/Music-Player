@@ -37,9 +37,7 @@ class CircularContainer extends StatelessWidget {
           height: iconSizeHeight,
           child: Padding(
             padding: EdgeInsets.only(left: isPlay == true ? 4 : 0).r,
-            child: SvgPicture.asset(
-              icon,
-            ),
+            child: SvgPicture.asset(icon),
           ),
         ),
       ),
