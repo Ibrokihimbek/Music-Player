@@ -7,78 +7,94 @@ import 'package:music/utils/fonts/font_style.dart';
 import 'package:music/utils/icons/app_icons.dart';
 import 'package:music/widgets/circular_container.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: ListView(
-        physics: const BouncingScrollPhysics(),
-        children: List.generate(
-          MusicsModel.musics.length,
-          (index) => InkWell(
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                RouteName.music,
-                arguments: {
-                  'music': index,
-                },
-              );
-            },
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 8).r,
-              child: SizedBox(
-                width: double.infinity,
-                height: 80.h,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 80.w,
-                      height: 80.h,
-                      child: Center(
-                        child: Image.asset(
-                          MusicsModel.musics[index].musicImage,
+       
+        child: ReorderableListView.builder(
+          itemBuilder: (context, index) {
+            return InkWell(
+              key: ValueKey(MusicsModel.musics[index].musicName),
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  RouteName.music,
+                  arguments: {
+                    'music': index,
+                  },
+                );
+              },
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 8).r,
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 80.h,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 80.w,
+                        height: 80.h,
+                        child: Center(
+                          child: Image.asset(
+                            MusicsModel.musics[index].musicImage,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 16.w),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          MusicsModel.musics[index].musicName,
-                          style: fontUrbanistW700(appcolor: AppColors.black),
-                        ),
-                        SizedBox(height: 10.h),
-                        Text(
-                          MusicsModel.musics[index].musicDescription,
-                          style: fontUrbanistW500(appcolor: AppColors.black)
-                              .copyWith(fontSize: 12.sp),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    CircularContainer(
-                      isPlay: true,
-                      iconSizeHeight: 14.h,
-                      iconSizeWidth: 14.w,
-                      sizeHeight: 32.h,
-                      sizeWidth: 32.w,
-                      icon: AppIcons.play_music_icon,
-                    ),
-                    SizedBox(width: 12.w),
-                    const Icon(Icons.menu)
-                  ],
+                      SizedBox(width: 16.w),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            MusicsModel.musics[index].musicName,
+                            style: fontUrbanistW700(appcolor: AppColors.black),
+                          ),
+                          SizedBox(height: 10.h),
+                          Text(
+                            MusicsModel.musics[index].musicDescription,
+                            style: fontUrbanistW500(appcolor: AppColors.black)
+                                .copyWith(fontSize: 12.sp),
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      CircularContainer(
+                        isPlay: true,
+                        iconSizeHeight: 14.h,
+                        iconSizeWidth: 14.w,
+                        sizeHeight: 32.h,
+                        sizeWidth: 32.w,
+                        icon: AppIcons.play_music_icon,
+                      ),
+                      SizedBox(width: 12.w),
+                      const Icon(Icons.menu)
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
+          itemCount: MusicsModel.musics.length,
+          onReorder: (oldIndex, newIndex) {
+            setState(
+              () {
+                final index = newIndex > oldIndex ? newIndex - 1 : newIndex;
+                final music = MusicsModel.musics.removeAt(oldIndex);
+                MusicsModel.musics.insert(index, music);
+              },
+            );
+          },
         ),
-      )),
+      ),
     );
   }
 }
