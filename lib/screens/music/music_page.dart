@@ -10,8 +10,8 @@ import 'package:music/utils/icons/app_icons.dart';
 import 'package:music/widgets/circular_container.dart';
 
 class MusicPage extends StatefulWidget {
-  final MusicsModel musicsModel;
-  const MusicPage({super.key, required this.musicsModel});
+  int index;
+  MusicPage({super.key, required this.index});
 
   @override
   State<MusicPage> createState() => _MusicPageState();
@@ -41,8 +41,19 @@ class _MusicPageState extends State<MusicPage> {
     _init();
   }
 
+  playMusic() async {
+    await player.setSource(AssetSource(MusicsModel.musics[widget.index].music));
+    await player.play(AssetSource(MusicsModel.musics[widget.index].music));
+  }
+
   _init() async {
-    await player.setSource(AssetSource(widget.musicsModel.music));
+    player.onPlayerComplete.listen((event) {
+      widget.index = (++widget.index) % MusicsModel.musics.length;
+      setState(() {});
+      playMusic();
+    });
+
+    await player.setSource(AssetSource(MusicsModel.musics[widget.index].music));
     player.onDurationChanged.listen((Duration d) {
       setState(() {
         duration = d;
@@ -70,17 +81,17 @@ class _MusicPageState extends State<MusicPage> {
             SizedBox(
               width: 380.w,
               height: 380.w,
-              child: Image.asset(widget.musicsModel.musicImage),
+              child: Image.asset(MusicsModel.musics[widget.index].musicImage),
             ),
             SizedBox(height: 20.h),
             Text(
-              widget.musicsModel.musicName,
+              MusicsModel.musics[widget.index].musicName,
               style: fontUrbanistW700(appcolor: AppColors.black)
                   .copyWith(fontSize: 32.sp),
             ),
             SizedBox(height: 12.h),
             Text(
-              widget.musicsModel.musicDescription,
+              MusicsModel.musics[widget.index].musicDescription,
               style: fontUrbanistW600(appcolor: AppColors.black),
             ),
             SizedBox(height: 40.h),
@@ -90,12 +101,9 @@ class _MusicPageState extends State<MusicPage> {
               inactiveColor: AppColors.C_E0E0E0,
               max: double.parse(duration.inSeconds.toString()),
               value: double.parse(currentDuration.inSeconds.toString()),
-              onChanged: (double value) {
-                setState(
-                  () {
-                    currentSliderValue = value;
-                  },
-                );
+              onChanged: (double value) async {
+                player.seek(Duration(seconds: value.toInt()));
+                setState(() {});
               },
             ),
             SizedBox(height: 4.h),
@@ -118,13 +126,27 @@ class _MusicPageState extends State<MusicPage> {
               ),
             ),
             SizedBox(height: 16.h),
-            
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40).r,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomIconButton(icon: AppIcons.back_icon, onTap: () {}),
+                  CustomIconButton(
+                    icon: AppIcons.back_icon,
+                    onTap: () async {
+                      await player.stop();
+                      setState(
+                        () {
+                          widget.index =
+                              (--widget.index) % MusicsModel.musics.length;
+                        },
+                      );
+                      await player.setSource(
+                          AssetSource(MusicsModel.musics[widget.index].music));
+                      await player.play(
+                          AssetSource(MusicsModel.musics[widget.index].music));
+                    },
+                  ),
                   CustomIconButton(
                       icon: AppIcons.backward_icon,
                       onTap: () async {
@@ -137,8 +159,8 @@ class _MusicPageState extends State<MusicPage> {
                       if (isPlaying) {
                         await player.pause();
                       } else {
-                        await player
-                            .play(AssetSource(widget.musicsModel.music));
+                        await player.play(AssetSource(
+                            MusicsModel.musics[widget.index].music));
                       }
                       setState(() {
                         isPlaying = !isPlaying;
@@ -162,7 +184,22 @@ class _MusicPageState extends State<MusicPage> {
                             Duration(seconds: currentDuration.inSeconds + 10));
                         setState(() {});
                       }),
-                  CustomIconButton(icon: AppIcons.next_icon, onTap: () {}),
+                  CustomIconButton(
+                    icon: AppIcons.next_icon,
+                    onTap: () async {
+                      await player.stop();
+                      setState(
+                        () {
+                          widget.index =
+                              (++widget.index) % MusicsModel.musics.length;
+                        },
+                      );
+                      await player.setSource(
+                          AssetSource(MusicsModel.musics[widget.index].music));
+                      await player.play(
+                          AssetSource(MusicsModel.musics[widget.index].music));
+                    },
+                  ),
                 ],
               ),
             )

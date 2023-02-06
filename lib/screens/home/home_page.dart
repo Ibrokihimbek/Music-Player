@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
                 context,
                 RouteName.music,
                 arguments: {
-                  'music': MusicsModel.musics[index],
+                  'music': index,
                 },
               );
             },
@@ -71,7 +71,7 @@ class HomePage extends StatelessWidget {
                       icon: AppIcons.play_music_icon,
                     ),
                     SizedBox(width: 12.w),
-                    const Icon(Icons.more_vert_outlined)
+                    const Icon(Icons.menu)
                   ],
                 ),
               ),

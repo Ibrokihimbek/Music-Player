@@ -18,7 +18,7 @@ class AppRoutes {
         final args = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
           builder: (_) => MusicPage(
-            musicsModel: args['music'],
+            index: args['music'],
           ),
         );
       case RouteName.home:

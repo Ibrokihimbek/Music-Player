@@ -3,7 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:music/screens/router.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -20,9 +22,8 @@ class MyApp extends StatelessWidget {
           initialRoute: RouteName.splash,
           onGenerateRoute: AppRoutes.generateRoute,
           debugShowCheckedModeBanner: false,
-          title: 'Ishonch 571',
+          title: 'My music',
           theme: ThemeData(
-            fontFamily: 'Roboto',
             primarySwatch: Colors.blue,
           ),
         );
