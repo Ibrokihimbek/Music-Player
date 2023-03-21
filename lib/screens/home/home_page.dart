@@ -19,7 +19,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-       
         child: ReorderableListView.builder(
           itemBuilder: (context, index) {
             return InkWell(
